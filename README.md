@@ -31,13 +31,13 @@ Add your local and remote services, start the tunnel, and your traffic flows sea
 
 ### Access TailPass with Phone
 
-![TailPass](images/TailPass with termux.png)
+![TailPass](images/TailPass_with_termux.png)
 
 
-![TailPass with Phone](images/Tailscale Phone.png)
+![TailPass with Phone](images/Tailscale_Phone.png)
 
 
-![TailPass with Phone](images/Dashboard on Phone.png)
+![TailPass with Phone](images/Dashboard_on_Phone.png)
 
 
 
