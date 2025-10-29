@@ -13,3 +13,17 @@ Add your local and remote services, start the tunnel, and your traffic flows sea
   <img src="images/Architecture.svg" alt="architecture" width="600">
 </p>
 
+## Screenshots
+
+### Dashboard
+
+![Dashboard](images/Dashboard.png)
+
+### Create
+
+![Create](images/Create.png)
+
+
+### Service access
+
+![SSH_Access](images/SSH_Access.png)
