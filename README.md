@@ -1,8 +1,5 @@
-![logo](images/tailpass.png)
-
-
 <p align="center">
-  <img src="images/logo.png" alt="Tailpass Logo" width="200">
+  <img src="images/tailpass.png" alt="Tailpass Logo" width="200">
 </p>
 
 Tailpass is a Tailscale powered TCP port forwarding tool that bridges your VLANs, containers, and hosts  simply and securely.
