@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: postgres_db
+    restart: always
+    env_file: .env
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+  backend:
+    build: ./backend
+    container_name: tailpass_backend
+    depends_on:
+      - db
+    env_file: .env
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable"
+      PORT: 8081
+    ports:
+      - "8081:8081"
+
+  frontend:
+    build: ./frontend
+    container_name: tailpass_frontend
+    depends_on:
+      - backend
+    ports:
+      - "8000:8000"
+
+volumes:
+  db_data:

@@ -1,0 +1,10 @@
+CREATE TABLE services (
+  id SERIAL PRIMARY KEY,
+  service_name VARCHAR(100) NOT NULL,
+  local_ip INET NOT NULL,
+  local_port INTEGER NOT NULL CHECK (local_port BETWEEN 1 AND 65535),
+  remote_ip INET NOT NULL,
+  remote_port INTEGER NOT NULL CHECK (remote_port BETWEEN 1 AND 65535),
+  pid INTEGER,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

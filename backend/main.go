@@ -12,9 +12,11 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-const (
-	dbMaxConns = 5
-	connString = "postgres://admin:StrongPassword123@192.168.30.249:5432/tunnel_services"
+ const dbMaxConns = 5
+var (
+	//dbMaxConns = 5
+	//connString = "postgres://admin:StrongPassword123@localhost:5432/tunnel_services"
+        connString=os.Getenv("DATABASE_URL")
 )
 
 func main() {
