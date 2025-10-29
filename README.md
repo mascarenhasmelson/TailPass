@@ -7,7 +7,7 @@ Tailpass is a Tailscale powered TCP port forwarding tool that bridges your VLANs
 You can easily connect web servers, SSH sessions, databases, or any TCP service across your network without worrying about complex configurations.
 Add your local and remote services, start the tunnel, and your traffic flows seamlessly through Tailscale. Tailpass gives you a lightweight dashboard, an efficient backend, and the freedom to access your services from anywhere.
 
-#Architecture
+## Architecture
 
 <p align="center">
   <img src="images/Architecture.svg" alt="architecture" width="600">

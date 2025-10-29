@@ -3,7 +3,7 @@
     <div class="app-container">
       <div class="header">
       <div class="h1">
-        <h2>Tailscale Portforwarding</h2>
+        <h2>TailPass</h2>
       </div>
        
         <div class="button-group">
