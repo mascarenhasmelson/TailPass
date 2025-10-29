@@ -1,5 +1,10 @@
 ![logo](images/tailpass.png)
 
+
+<p align="center">
+  <img src="images/logo.png" alt="Tailpass Logo" width="200">
+</p>
+
 Tailpass is a Tailscale powered TCP port forwarding tool that bridges your VLANs, containers, and hosts  simply and securely.
 
 You can easily connect web servers, SSH sessions, databases, or any TCP service across your network without worrying about complex configurations.
