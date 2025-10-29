@@ -44,6 +44,42 @@ Add your local and remote services, start the tunnel, and your traffic flows sea
   <img src="images/Dashboard_on_Phone.jpg" alt="Tailpass" width="300">
 </p>
 
+## 🗺️ Project Roadmap
+
+This section outlines the upcoming improvements and planned features for **TailPass** — ensuring smoother operation, better usability, and more powerful functionality.
+
+---
+
+### Planned Enhancements
+- [ ] **GUI Improvements**
+  - Refine layout and responsiveness  
+  - Improve service management UX  
+
+- [ ] **Health Checks**
+  - Implement port-based health monitoring for each service  
+  - Periodic background checks with automatic status updates  
+
+- [ ] **Authentication**
+  - Add **Login Page** with **JWT-based authentication**  
+  - Secure routes for authenticated users only  
+  - Token refresh and logout feature  
+
+---
+
+###  Bug Fixes   
+- [ ] Clean up unused CSS/JS dependencies  
+- [ ] Handle missing or invalid environment variables gracefully  
+- [ ] Optimize database connection pool size and error handling  
+
+---
+
+### Future Features
+- [ ] **Service Restart & Stop Controls** (from GUI)  
+- [ ] **Container Health Metrics Dashboard** (CPU, memory, uptime)  
+- [ ] **Configurable Alerts** (email/webhook on service failure)  
+---
+
+
 
 
 
