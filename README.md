@@ -31,7 +31,9 @@ Add your local and remote services, start the tunnel, and your traffic flows sea
 
 ### Access TailPass with Phone
 
-![TailPass](images/TailPass_with_termux.jpg)
+<p align="left">
+  <img src="images/TailPass_with_termux.jpg" alt="Tailpass" width="450">
+</p>
 
 
 ![TailPass with Phone](images/Tailscale_Phone.jpg)
