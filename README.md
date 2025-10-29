@@ -44,10 +44,9 @@ Add your local and remote services, start the tunnel, and your traffic flows sea
   <img src="images/Dashboard_on_Phone.jpg" alt="Tailpass" width="300">
 </p>
 
-## 🗺️ Project Roadmap
+## Roadmap
 
-This section outlines the upcoming improvements and planned features for **TailPass** — ensuring smoother operation, better usability, and more powerful functionality.
-
+Fix and Features
 ---
 
 ### Planned Enhancements
