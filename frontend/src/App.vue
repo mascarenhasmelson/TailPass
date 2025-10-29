@@ -76,7 +76,7 @@ const error = ref(null);
 const services = ref([]);
 const form = ref({
   service_name: '',
-  local_ip: '127.0.0.1',
+  local_ip: '',
   local_port: '',
   remote_ip: '',
   remote_port: ''
@@ -127,7 +127,7 @@ async function saveService() {
     
     form.value = { 
       service_name: '', 
-      local_ip: '127.0.0.1', 
+      local_ip: '', 
       local_port: '', 
       remote_ip: '', 
       remote_port: '' 

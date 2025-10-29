@@ -27,3 +27,18 @@ Add your local and remote services, start the tunnel, and your traffic flows sea
 ### Service access
 
 ![SSH_Access](images/SSH_Access.png)
+
+
+### Access TailPass with Phone
+
+![TailPass](images/TailPass with termux.png)
+
+
+![TailPass with Phone](images/Tailscale Phone.png)
+
+
+![TailPass with Phone](images/Dashboard on Phone.png)
+
+
+
+
