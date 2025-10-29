@@ -32,14 +32,17 @@ Add your local and remote services, start the tunnel, and your traffic flows sea
 ### Access TailPass with Phone
 
 <p align="left">
-  <img src="images/TailPass_with_termux.jpg" alt="Tailpass" width="450">
+  <img src="images/TailPass_with_termux.jpg" alt="Tailpass" width="300">
 </p>
 
 
-![TailPass with Phone](images/Tailscale_Phone.jpg)
+<p align="left">
+  <img src="images/Tailscale_Phone.jpg" alt="Tailpass" width="300">
+</p>
 
-
-![TailPass with Phone](images/Dashboard_on_Phone.jpg)
+<p align="left">
+  <img src="images/Dashboard_on_Phone.jpg" alt="Tailpass" width="300">
+</p>
 
 
 
