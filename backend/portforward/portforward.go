@@ -33,7 +33,7 @@ func PortForward(ctx context.Context, localIP, localPort, remoteIP, remotePort s
  cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true} //
 	err := cmd.Start()
 	if err != nil {
-    fmt.Printf("[ERROR] Failed to start ./main: %v\n", err)
+    fmt.Printf("[ERROR] Failed to start ./tcp: %v\n", err)
 		return 0, err
 	}
   go func() {

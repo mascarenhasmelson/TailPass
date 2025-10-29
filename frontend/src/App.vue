@@ -67,7 +67,7 @@
 
 <script setup>
 import { ref, onMounted ,onUnmounted} from 'vue';
-const API_BASE_URL = 'http://192.168.20.17:8082';
+const API_BASE_URL = import.meta.env.API_BASE_URL;
 const showForm = ref(false);
 const isDark = ref(false);
 const loading = ref(false);

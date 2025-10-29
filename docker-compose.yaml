@@ -1,36 +1,45 @@
-version: "3.9"
+version: '3.9'
 
 services:
-  db:
+  postgres_db:
     image: postgres:16-alpine
     container_name: postgres_db
-    restart: always
-    env_file: .env
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: StrongPassword123
+      POSTGRES_DB: tunnel_services
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      # Your schema file to auto-create the 'services' table
       - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d tunnel_services"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   backend:
     build: ./backend
-    container_name: tailpass_backend
+    container_name: tailpass-backend
     depends_on:
-      - db
-    env_file: .env
+      postgres_db:
+        condition: service_healthy
     environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable"
-      PORT: 8081
+      - DATABASE_URL=postgres://admin:StrongPassword123@postgres_db:5432/tunnel_services
     ports:
-      - "8081:8081"
+      - "8082:8082"
+    command: ./TailPass
+    restart: unless-stopped
 
   frontend:
     build: ./frontend
-    container_name: tailpass_frontend
+    container_name: tailpass-frontend
     depends_on:
       - backend
+    environment:
+      - API_BASE_URL=http://localhost:8082
     ports:
       - "8000:8000"
-
-volumes:
-  db_data:
+    command: npm run serve
+    restart: unless-stopped
