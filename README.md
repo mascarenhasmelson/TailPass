@@ -111,6 +111,6 @@ Fix and Features
   Display container CPU, memory, and uptime statistics in real-time.  
 
 - [ ] **Configurable Alerts**  
-  Receive alerts via email or webhook when a service fails or becomes unreachable.  
+  Receive alerts via webhook when a service fails or becomes unreachable.  
 
 ---
