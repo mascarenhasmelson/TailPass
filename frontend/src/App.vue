@@ -5,7 +5,7 @@
       <div class="h1">
         <h2>TailPass</h2>
       </div>
-       
+
         <div class="button-group">
           <button @click="toggleDark">{{ isDark ? 'Light Mode' : 'Dark Mode' }}</button>
           <button @click="showForm = true"> Add Service</button>
@@ -18,23 +18,23 @@
             <div class="service-name"><strong>{{ service.service_name }}</strong></div>
             <div class="service-details">
                <!-- <div>
-                <span class="label">id:</span> 
+                <span class="label">id:</span>
                 <span class="highlight-ip">{{ service.id }}</span>
               </div> -->
               <div>
-                <span class="label">Local IP:</span> 
+                <span class="label">Local IP:</span>
                 <span class="highlight-ip">{{ service.local_ip }}</span>
               </div>
               <div>
-                <span class="label">Local Port:</span> 
+                <span class="label">Local Port:</span>
                 <span class="highlight-port">{{ service.local_port }}</span>
               </div>
               <div>
-                <span class="label">Remote IP:</span> 
+                <span class="label">Remote IP:</span>
                 <span class="highlight-ip">{{ service.remote_ip }}</span>
               </div>
               <div>
-                <span class="label">Remote Port:</span> 
+                <span class="label">Remote Port:</span>
                 <span class="highlight-port">{{ service.remote_port }}</span>
               </div>
             </div>
@@ -67,7 +67,11 @@
 
 <script setup>
 import { ref, onMounted ,onUnmounted} from 'vue';
-const API_BASE_URL = import.meta.env.API_BASE_URL;
+const API_BASE_URL = 'http://localhost:8082';
+console.log('API Base URL:', API_BASE_URL);
+//const API_BASE_URL = 'http://192.168.20.17:8082';
+//const API_BASE_URL =  process.env.API_BASE_URL;
+console.log(API_BASE_URL);
 const showForm = ref(false);
 const isDark = ref(false);
 const loading = ref(false);
@@ -85,14 +89,14 @@ const form = ref({
 async function fetchServices() {
   loading.value = true;
   error.value = null;
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}/services`);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const data = await response.json();
     services.value = data;
   } catch (err) {
@@ -108,32 +112,32 @@ async function saveService() {
     alert('Service name is required');
     return;
   }
-  
+
   loading.value = true;
   error.value = null;
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}/services`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-    body: JSON.stringify(form.value)                                                                                                                           
+    body: JSON.stringify(form.value)
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
-    form.value = { 
-      service_name: '', 
-      local_ip: '', 
-      local_port: '', 
-      remote_ip: '', 
-      remote_port: '' 
+
+    form.value = {
+      service_name: '',
+      local_ip: '',
+      local_port: '',
+      remote_ip: '',
+      remote_port: ''
     };
     showForm.value = false;
-    
+
     await fetchServices();
   } catch (err) {
     error.value = `Failed to save service: ${err.message}`;
@@ -147,15 +151,15 @@ async function deleteService(id) {
   if (!confirm('delete?')) {
     return;
   }
-  
+
   loading.value = true;
   error.value = null;
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}/services/${id}`, {
       method: 'DELETE'
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -183,7 +187,7 @@ onMounted(() => {
     isDark.value = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   }
   applyBodyClass();
-  
+
   fetchServices();
    intervalId = setInterval(fetchServices, 5000);
 });
@@ -233,7 +237,7 @@ body.dark {
 .app-wrapper, .app-container {
   width: 100%;
   min-height: 100vh;
-  background: var(--bg);  
+  background: var(--bg);
   box-sizing: border-box;
 }
 
@@ -299,10 +303,10 @@ body.dark {
   font-size: 0.95rem;
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap; 
+  flex-wrap: nowrap;
   gap: 20px;
   line-height: 1.6;
-  white-space: nowrap; 
+  white-space: nowrap;
 }
 
 .service-details > div {
@@ -401,7 +405,7 @@ button.delete:hover {
   color: var(--text);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 
+  box-shadow:
     0 10px 30px rgba(2, 6, 23, 0.25),
     0 0 0 1px rgba(59, 130, 246, 0.3),
     0 0 40px rgba(59, 130, 246, 0.4),
