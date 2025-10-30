@@ -62,6 +62,14 @@ docker compose up --build
 | Backend   | http://localhost:8082 | Go API Server                        |
 | Database  | localhost:5432        | PostgreSQL (admin / StrongPassword123) |
 
+## Usage
+
+TailPass allows you to forward TCP ports from your local machine, container, or VLAN network through your Tailscale interface — enabling secure remote access to any TCP service such as web servers, SSH, or databases.
+
+You can bind the service to any **local IP address**, including:
+- `127.0.0.1` → to expose only on localhost  
+- `100.x.x.x` (Tailscale IP) → to expose over your Tailscale network  
+- `0.0.0.0` → to listen on all available interfaces  
 
 ## Roadmap
 
