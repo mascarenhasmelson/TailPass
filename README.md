@@ -35,24 +35,43 @@ Add your local and remote services, start the tunnel, and your traffic flows sea
   <img src="images/TailPass_with_termux.jpg" alt="Tailpass" width="300">
 </p>
 
+# Running TailPass with Docker Compose
+TailPass consists of:
+* Backend (Go) – Handles API requests and port forwarding
+* Frontend (Vue.js) – Web interface for configuration and monitoring
+* PostgreSQL Database – Stores tunnel and service data
 
-<p align="left">
-  <img src="images/Tailscale_Phone.jpg" alt="Tailpass" width="300">
-</p>
+All components are containerized and managed with Docker Compose.
 
-<p align="left">
-  <img src="images/Dashboard_on_Phone.jpg" alt="Tailpass" width="300">
-</p>
+# 1. Clone the Repository
+```
+git clone https://github.com/mascarenhasmelson/TailPass.git
+cd TailPass
+```
+# 2. Build and Run the Containers
+
+```
+docker compose up --build
+```
+
+# 3. Access the Services
+
+| Service  | URL                  | Description                          |
+|-----------|---------------------|--------------------------------------|
+| Frontend  | http://localhost:8000 | TailPass Web GUI                     |
+| Backend   | http://localhost:8082 | Go API Server                        |
+| Database  | localhost:5432        | PostgreSQL (admin / StrongPassword123) |
+
 
 ## Roadmap
 
 Fix and Features
 ---
 
-### Planned Enhancements
+## 🗺️ Roadmap
+
 - [ ] **GUI Improvements**
   - Refine layout and responsiveness  
-  - Improve service management UX  
 
 - [ ] **Health Checks**
   - Implement port-based health monitoring for each service  
@@ -63,22 +82,27 @@ Fix and Features
   - Secure routes for authenticated users only  
   - Token refresh and logout feature  
 
+- [ ] **Input Validation & Sanitization**
+  - Validate user inputs before database operations  
+  - Show clear error messages for invalid fields  
+
+- [ ] **ORM Integration**
+  - Migrate raw SQL queries to ORM-based model handling  
+  - Simplify database migrations and schema updates  
+  - Improve maintainability and data consistency across services  
+
+- [ ] **Container & Deployment Enhancements**
+  - Optimize Docker image size  
+  - Add health checks for backend and frontend containers  
+  - Support production-ready environment configurations
+
+- [ ] **Service Restart & Stop Controls**  
+  Manage running services directly from the GUI (start, stop, restart).  
+
+- [ ] **Container Health Metrics Dashboard**  
+  Display container CPU, memory, and uptime statistics in real-time.  
+
+- [ ] **Configurable Alerts**  
+  Receive alerts via email or webhook when a service fails or becomes unreachable.  
+
 ---
-
-###  Bug Fixes   
-- [ ] Clean up unused CSS/JS dependencies  
-- [ ] Handle missing or invalid environment variables gracefully  
-- [ ] Optimize database connection pool size and error handling  
-
----
-
-### Future Features
-- [ ] **Service Restart & Stop Controls** (from GUI)  
-- [ ] **Container Health Metrics Dashboard** (CPU, memory, uptime)  
-- [ ] **Configurable Alerts** (email/webhook on service failure)  
----
-
-
-
-
-
