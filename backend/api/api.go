@@ -111,7 +111,7 @@ s.PID = pid
 func EnableCORS(w *http.ResponseWriter, r *http.Request) bool {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
 	if r.Method == http.MethodOptions {
 		(*w).WriteHeader(http.StatusOK)
 		   // (*w).WriteHeader(http.StatusNoContent)
@@ -119,8 +119,3 @@ func EnableCORS(w *http.ResponseWriter, r *http.Request) bool {
 	}
 	return false
 }
-
-
-// func portforward(ctx context.Context,s.LocalIP, s.LocalPort, s.RemoteIP, s.RemotePort) int{
-//
-// }

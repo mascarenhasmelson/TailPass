@@ -67,11 +67,7 @@
 
 <script setup>
 import { ref, onMounted ,onUnmounted} from 'vue';
-const API_BASE_URL = 'http://localhost:8082';
-console.log('API Base URL:', API_BASE_URL);
-//const API_BASE_URL = 'http://192.168.20.17:8082';
-//const API_BASE_URL =  process.env.API_BASE_URL;
-console.log(API_BASE_URL);
+const API_URL = import.meta.env.VITE_API_URL;
 const showForm = ref(false);
 const isDark = ref(false);
 const loading = ref(false);
@@ -91,7 +87,7 @@ async function fetchServices() {
   error.value = null;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/services`);
+  const response = await fetch(`${API_URL}/services`);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -117,7 +113,7 @@ async function saveService() {
   error.value = null;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/services`, {
+    const response = await fetch(`${API_URL}/services`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -156,7 +152,7 @@ async function deleteService(id) {
   error.value = null;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/services/${id}`, {
+    const response = await fetch(`${API_URL}/services/${id}`, {
       method: 'DELETE'
     });
 

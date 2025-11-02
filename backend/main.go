@@ -8,13 +8,11 @@ import (
 	"port/api"
 	"strconv"
 	"strings"
-
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
  const dbMaxConns = 5
 var (
-	//dbMaxConns = 5
 	//connString = "postgres://admin:StrongPassword123@localhost:5432/tunnel_services"
         connString=os.Getenv("DATABASE_URL")
 )

@@ -3,7 +3,7 @@ WORKDIR /app
 RUN apk add --no-cache git
 COPY . .
 RUN go mod download
-RUN go build -o TailPass main.go
+RUN go build -mod=mod -o TailPass main.go
 RUN git clone https://github.com/mascarenhasmelson/tcp-tunnel-go.git /tcp-tunnel-go \
     && cd /tcp-tunnel-go \
     && go mod tidy \
