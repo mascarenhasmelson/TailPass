@@ -71,6 +71,14 @@ You can bind the service to any **local IP address**, including:
 - `100.x.x.x` (Tailscale IP) → to expose over your Tailscale network  
 - `0.0.0.0` → to listen on all available interfaces  
 
+Added `.env` file for runtime, these are the default parameters
+```
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=StrongPassword123
+POSTGRES_DB=tunnel_services
+POSTGRES_PORT=5432
+VITE_API_URL=http://192.168.20.17:8082
+```
 ## Roadmap
 
 Fix and Features
