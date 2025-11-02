@@ -91,7 +91,8 @@ Fix and Features
 
 - [ ] **Health Checks**
   - Implement port-based health monitoring for each service  
-  - Periodic background checks with automatic status updates  
+  - Periodic background checks with automatic status updates 
+  - Portscan  
 
 - [ ] **Authentication**
   - Add **Login Page** with **JWT-based authentication**  
