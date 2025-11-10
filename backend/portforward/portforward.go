@@ -14,7 +14,6 @@ func PortForward(ctx context.Context, localIP, localPort, remoteIP, remotePort s
   mu.Lock()
   defer mu.Unlock()
   fmt.Println("im herer")
-  // binaryPath := "/home/panipuri/Desktop/workspace/backend/portforward/tcp"
 	args := []string{
 		fmt.Sprintf("--bind-address=%s", localIP),
 		fmt.Sprintf("--local-port=%s", localPort),
@@ -22,15 +21,10 @@ func PortForward(ctx context.Context, localIP, localPort, remoteIP, remotePort s
 		fmt.Sprintf("--remote-port=%s", remotePort),
 	}
   fmt.Println("im here:", "./tcp", args)
-  // dir, err := os.Getwd()
-	// if err != nil {
-	// 	return -1, fmt.Errorf("failed to get current directory: %v", err)
-	// }
-  // tcpPath := filepath.Join(dir, "tcp")
 	cmd := exec.CommandContext(ctx, "./tcp", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
- cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true} //
+ cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true} 
 	err := cmd.Start()
 	if err != nil {
     fmt.Printf("[ERROR] Failed to start ./tcp: %v\n", err)

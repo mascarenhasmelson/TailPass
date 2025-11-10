@@ -49,6 +49,16 @@
         <div class="modal-content">
           <h3>Add Service</h3>
           <form @submit.prevent="saveService">
+
+          <label>Enter New Group Name</label>
+          <input v-model="form.new_group_name" placeholder="New Group Name" />
+                        <p>or</p>
+          <label>Select Existing Group</label>
+
+          <select v-model="form.group_id">
+          <option disabled value="">-- Choose existing group --</option>
+    <option v-for="group in groups" :key="group.id" :value="group.id">  {{ group.name }} </option>
+    </select>
             <input v-model="form.service_name" placeholder="Service Name" required />
             <input v-model="form.local_ip" placeholder="Local IP" required />
             <input v-model="form.local_port" placeholder="Local Port" type="number" required />
@@ -72,9 +82,12 @@ const showForm = ref(false);
 const isDark = ref(false);
 const loading = ref(false);
 const error = ref(null);
-
 const services = ref([]);
+const groups = ref([]);
+
 const form = ref({
+  group_id: '',
+  new_group_name: '',
   service_name: '',
   local_ip: '',
   local_port: '',
@@ -103,37 +116,78 @@ async function fetchServices() {
   }
 }
 
+async function fetchGroups() {
+  try {
+    const response = await fetch(`${API_URL}/groups`);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    groups.value = data;
+  } catch (err) {
+    console.error('Error fetching groups:', err);
+  }
+}
+
+
 async function saveService() {
   if (!form.value.service_name.trim()) {
     alert('Service name is required');
     return;
   }
 
+  let groupId = form.value.group_id;
+
+  // If user entered new group name, create it
+  if (form.value.new_group_name && form.value.new_group_name.trim() !== '') {
+    try {
+      const response = await fetch(`${API_URL}/groups`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: form.value.new_group_name }),
+      });
+      if (!response.ok) throw new Error(`Failed to create group`);
+      const newGroup = await response.json();
+      groupId = newGroup.id;
+    } catch (err) {
+      alert('Error creating new group: ' + err.message);
+      return;
+    }
+  }
+
+  if (!groupId) {
+    alert('Please select an existing group or create a new one');
+    return;
+  }
+
+  // ✅ Now save service under correct group
   loading.value = true;
   error.value = null;
 
   try {
     const response = await fetch(`${API_URL}/services`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    body: JSON.stringify(form.value)
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        group_id: groupId,
+        service_name: form.value.service_name,
+        local_ip: form.value.local_ip,
+        local_port: form.value.local_port,
+        remote_ip: form.value.remote_ip,
+        remote_port: form.value.remote_port
+      }),
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     form.value = {
+      group_id: '',
+      new_group_name: '',
       service_name: '',
       local_ip: '',
       local_port: '',
       remote_ip: '',
       remote_port: ''
     };
-    showForm.value = false;
 
+    showForm.value = false;
     await fetchServices();
   } catch (err) {
     error.value = `Failed to save service: ${err.message}`;
@@ -143,10 +197,9 @@ async function saveService() {
     loading.value = false;
   }
 }
+
 async function deleteService(id) {
-  if (!confirm('delete?')) {
-    return;
-  }
+  if (!confirm('Delete this service?')) return;
 
   loading.value = true;
   error.value = null;
@@ -155,10 +208,7 @@ async function deleteService(id) {
     const response = await fetch(`${API_URL}/services/${id}`, {
       method: 'DELETE'
     });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     await fetchServices();
   } catch (err) {
     error.value = `Failed to delete service: ${err.message}`;
@@ -174,7 +224,6 @@ let intervalId = null;
 onUnmounted(() => {
   if (intervalId) clearInterval(intervalId);
 });
-
 onMounted(() => {
   const stored = localStorage.getItem('dark-mode');
   if (stored !== null) {
@@ -183,9 +232,9 @@ onMounted(() => {
     isDark.value = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   }
   applyBodyClass();
-
   fetchServices();
-   intervalId = setInterval(fetchServices, 5000);
+  fetchGroups();
+  intervalId = setInterval(fetchServices, 5000);
 });
 
 function toggleDark() {
