@@ -92,7 +92,17 @@ Fix and Features
 - [ ] **Health Checks**
   - Implement port-based health monitoring for each service  
   - Periodic background checks with automatic status updates  
+
+- [ ] **Network Tools**
   - Portscan
+  - DNS check
+  - Trace route
+  - LAN Wakeup
+  - Ping
+  - NSlookup
+  - Speedtest
+  - Telnet
+  - SSH
 
 - [ ] **Authentication**
   - Add **Login Page** with **JWT-based authentication**  
