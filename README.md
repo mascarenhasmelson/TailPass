@@ -93,9 +93,9 @@ Fix and Features
   - Implement port-based health monitoring for each service  
   - Periodic background checks with automatic status updates  
 
-- [ ] **Network Tools**
+- [ ] **Network/Monitoring Tools**
   - Portscan
-  - DNS check
+  - DNS check/Monitoring
   - Trace route
   - LAN Wakeup
   - Ping
@@ -103,6 +103,14 @@ Fix and Features
   - Speedtest
   - Telnet
   - SSH
+  - Website monitoring
+  - Response time monitoring
+  - SSL monitoring
+  - Domain expiration monitoring
+  - Cron job monitoring
+  - Port monitoring
+  - Ping Monitoring
+  - Keyword monitoring
 
 - [ ] **Authentication**
   - Add **Login Page** with **JWT-based authentication**  
