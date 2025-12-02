@@ -84,15 +84,33 @@ VITE_API_URL=http://localhost:8082
 Fix and Features
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [ ] **GUI Improvements**
   - Refine layout and responsiveness  
 
 - [ ] **Health Checks**
   - Implement port-based health monitoring for each service  
-  - Periodic background checks with automatic status updates 
-  - Portscan  
+  - Periodic background checks with automatic status updates  
+
+- [ ] **Network/Monitoring Tools**
+  - Portscan
+  - DNS check/Monitoring
+  - Trace route
+  - LAN Wakeup
+  - Ping
+  - NSlookup
+  - Speedtest
+  - Telnet
+  - SSH
+  - Website monitoring
+  - Response time monitoring
+  - SSL monitoring
+  - Domain expiration monitoring
+  - Cron job monitoring
+  - Port monitoring
+  - Ping Monitoring
+  - Keyword monitoring
 
 - [ ] **Authentication**
   - Add **Login Page** with **JWT-based authentication**  
@@ -114,12 +132,12 @@ Fix and Features
   - Support production-ready environment configurations
 
 - [ ] **Service Restart & Stop Controls**  
-  Manage running services directly from the GUI (start, stop, restart).  
+  - Manage running services directly from the GUI (start, stop, restart).  
 
 - [ ] **Container Health Metrics Dashboard**  
-  Display container CPU, memory, and uptime statistics in real-time.  
+  - Display container CPU, memory, and uptime statistics in real-time.  
 
 - [ ] **Configurable Alerts**  
-  Receive alerts via webhook when a service fails or becomes unreachable.  
+  - Receive alerts via webhook when a service fails or becomes unreachable.  
 
 ---
