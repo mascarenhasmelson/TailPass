@@ -1,17 +1,9 @@
 <template>
   <div class="app-wrapper">
     <div class="app-container">
-      <div class="header">
-        <div class="h1">
-          <h2>TailPass</h2>
-        </div>
-
         <div class="button-group">
-          <button @click="toggleDark">{{ isDark ? 'Light Mode' : 'Dark Mode' }}</button>
           <button @click="showForm = true">Add Service</button>
         </div>
-      </div>
-
       <div class="service-list">
         <div v-for="service in services" :key="service.id" class="service-card">
           <div class="service-info">
@@ -33,6 +25,22 @@
                 <span class="label">Remote Port:</span>
                 <span class="highlight-port">{{ service.remote_port }}</span>
               </div>
+             <div class="service-status"> Status:
+           <span 
+              class="status-dot" :class="service.online ? 'true' : 'false'">
+          </span>
+        <span class="status-text" v-if="service.online">
+              </span>
+              </div>
+              <div>
+                Last seen: 
+                <span  v-if="service.last_seen && !service.online" class="last-seen">
+                  {{ formatLastSeen(service.last_seen) }}
+              </span>
+               <span v-else class="last-seen">
+                Now
+              </span>
+              </div>
             </div>
           </div>
           <div>
@@ -45,7 +53,7 @@
         <div class="modal-content">
           <h3>Add Service</h3>
           <form @submit.prevent="saveService">
-            <label>Enter New Group Name</label>
+          <!-- <label>Enter New Group Name</label>
             <input v-model="form.new_group_name" placeholder="New Group Name" />
             <p>or</p>
             <label>Select Existing Group</label>
@@ -53,7 +61,7 @@
             <select v-model="form.group_id">
               <option disabled value="">-- Choose existing group --</option>
               <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.name }}</option>
-            </select>
+            </select> --> 
             <input v-model="form.service_name" placeholder="Service Name" required />
             <input v-model="form.local_ip" placeholder="Local IP" required />
             <input v-model="form.local_port" placeholder="Local Port" type="number" required />
@@ -73,7 +81,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = "http://192.168.20.17:8082";
 const showForm = ref(false);
 const isDark = ref(false);
 const loading = ref(false);
@@ -88,7 +97,9 @@ const form = ref({
   local_ip: '',
   local_port: '',
   remote_ip: '',
-  remote_port: ''
+  remote_port: '',
+  online:'',
+  last_seen:''
 });
 
 async function fetchServices() {
@@ -112,6 +123,17 @@ async function fetchServices() {
   }
 }
 
+function formatLastSeen(lastSeen) {
+  const t = new Date(lastSeen);
+  const now = new Date();
+  const diff = (now - t) / 1000; // diff in seconds
+
+  if (diff < 60) return "just now";
+  if (diff < 3600) return `${Math.floor(diff/60)} minutes ago`;
+  if (diff < 86400) return `${Math.floor(diff/3600)} hours ${Math.floor(diff%3600/60)} minutes ago`;
+  return t.toLocaleString(); // fallback for older timestamps
+}
+
 async function fetchGroups() {
   try {
     const response = await fetch(`${API_URL}/groups`);
@@ -129,7 +151,7 @@ async function saveService() {
     return;
   }
 
-  let groupId = form.value.group_id;
+  /*let groupId = form.value.group_id;
 
   if (form.value.new_group_name && form.value.new_group_name.trim() !== '') {
     try {
@@ -150,7 +172,7 @@ async function saveService() {
   if (!groupId) {
     alert('Please select an existing group or create a new one');
     return;
-  }
+  } */
 
   loading.value = true;
   error.value = null;
@@ -160,7 +182,7 @@ async function saveService() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        group_id: groupId,
+        //group_id: groupId,
         service_name: form.value.service_name,
         local_ip: form.value.local_ip,
         local_port: form.value.local_port,
@@ -169,10 +191,12 @@ async function saveService() {
       }),
     });
 
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+    }
     form.value = {
-      group_id: '',
-      new_group_name: '',
+      //group_id: '',
+      //new_group_name: '',
       service_name: '',
       local_ip: '',
       local_port: '',
@@ -230,13 +254,6 @@ onMounted(() => {
   fetchGroups();
   intervalId = setInterval(fetchServices, 5000);
 });
-
-function toggleDark() {
-  isDark.value = !isDark.value;
-  localStorage.setItem('dark-mode', isDark.value);
-  applyBodyClass();
-}
-
 function applyBodyClass() {
   if (isDark.value) document.body.classList.add('dark');
   else document.body.classList.remove('dark');
@@ -254,7 +271,7 @@ html, body {
   transition: background 0.3s, color 0.3s;
 }
 
-:root {
+/* :root {
   --bg: #f5f7fb;
   --card-bg: #ffffff;
   --text: #111827;
@@ -262,7 +279,7 @@ html, body {
   --btn-bg: #2563eb;
   --btn-text: #ffffff;
   --modal-overlay: rgba(0, 0, 0, 0.5);
-}
+} */
 
 body.dark {
   --bg: #0b1220;
@@ -290,6 +307,7 @@ body.dark {
 
 .button-group {
   display: flex;
+  padding: 17px; 
   gap: 10px;
   align-items: center;
   justify-content: flex-end;
@@ -305,7 +323,7 @@ body.dark {
 
 .service-card {
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   background: var(--card-bg);
   color: var(--text);
   border-radius: 12px;
@@ -360,6 +378,23 @@ body.dark {
   opacity: 0.7;
   margin-right: 4px;
 }
+
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.status-dot.true {
+  background-color: #16a34a; /* green */
+}
+
+.status-dot.false {
+  background-color: #ef4444; /* red */
+}
+.last-seen { font-style: italic; margin-left: 5px; }
 
 .highlight-ip {
   font-weight: 600;
