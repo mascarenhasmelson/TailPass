@@ -29,7 +29,7 @@ func NewRouter(ctx context.Context, pool *pgxpool.Pool) *http.ServeMux {
 func (r *Router) routes() {
 	r.mux.HandleFunc("/services", r.servicesHandler)
 	r.mux.HandleFunc("/services/", r.serviceHandler)
-	// r.mux.HandleFunc("/services/isp", r.ispHandler)
+	r.mux.HandleFunc("/services/isp", r.ispHandler)
 }
 
 func (r *Router) servicesHandler(w http.ResponseWriter, req *http.Request) {
@@ -70,18 +70,19 @@ func (r *Router) serviceHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-// func (r *Router) ispHandler(w http.ResponseWriter, req *http.Request) {
-// 	if EnableCORS(&w, req) {
-// 		return
-// 	}
-// 	if req.Method == http.MethodOptions {
-// 		w.WriteHeader(http.StatusNoContent)
-// 		return
-// 	}
-// 	switch req.Method {
-// 	case http.MethodGet:
-// 		HandleGetISPInfo(r.ctx, w)
-// 	default:
-// 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-// 	}
-// }
+func (r *Router) ispHandler(w http.ResponseWriter, req *http.Request) {
+	if EnableCORS(&w, req) {
+		return
+	}
+	if req.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	switch req.Method {
+	case http.MethodGet:
+		HandleGetISPInfo(w, req)
+	default:
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+}

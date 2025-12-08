@@ -22,7 +22,7 @@ func main() {
 	signal.Notify(sig, os.Interrupt)
 	go func() {
 		<-sig
-		fmt.Println("Shutting down...")
+		fmt.Println("Kill...")
 		cancel()
 	}()
 	connString := "postgres://admin:StrongPassword123@localhost:5432/tunnel_services"
@@ -47,11 +47,11 @@ func main() {
 	}
 	go func() {
 		<-ctx.Done()
-		fmt.Println("Stopping HTTP server...")
+		fmt.Println("Stopping Backend server...")
 		server.Shutdown(context.Background())
 	}()
 	fmt.Println("running on http://localhost:8082")
-	// router := api.NewRouter(ctx, pool)
+
 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatal("HTTP server error:", err)
 	}

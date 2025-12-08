@@ -14,12 +14,17 @@ type Service struct {
 	PID          int        `json:"pid"`
 }
 
-type Home struct {
-	Status      string `json:"status"`
-	PublicIP    string `json:"publicip"`
-	ISPInfo     string `json:"ispinfo"`
-	Interstatus string `json:"interstatus"`
+// type Home struct {
+// 	Status      string `json:"status"`
+// 	PublicIP    string `json:"publicip"`
+// 	ISPInfo     string `json:"ispinfo"`
+// 	Interstatus string `json:"interstatus"`
+// }
+type IPInfoRaw struct {
+	IP  string `json:"ip"`
+	Org string `json:"org"`
 }
+
 type Error struct {
 	Message string
 }
