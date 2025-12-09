@@ -22,18 +22,7 @@ Add your local and remote services, start the tunnel, and your traffic flows sea
 ### Create
 
 ![Create](images/Create.png)
-
-
-### Service access
-
-![SSH_Access](images/SSH_Access.png)
-
-
-### Access TailPass with Phone
-
-<p align="left">
-  <img src="images/TailPass_with_termux.jpg" alt="Tailpass" width="300">
-</p>
+![View](Image/View.png)
 
 # Running TailPass with Docker Compose
 TailPass consists of:
