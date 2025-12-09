@@ -5,23 +5,29 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"port/utils"
-	"sync"
 	"os"
-  "port/portforward"
-   "strconv"
+	"port/servicetools"
+	"port/utils"
+	"strconv"
+	"sync"
+
 	"github.com/jackc/pgx/v4/pgxpool"
 )
+
 var mu sync.Mutex
-// var services []utils.Service
+
 func HandleFetchServices(ctx context.Context, w http.ResponseWriter, pool *pgxpool.Pool) {
 	rows, err := pool.Query(ctx, `
-		SELECT id, service_name::text,
+		SELECT id, 
+		service_name::text,
 	       host(local_ip) AS local_ip,
 	       local_port,
 	       host(remote_ip) AS remote_ip,
-	       remote_port
-	FROM services
+	       remote_port,
+		   online,
+		last_seen
+	FROM services 
+	ORDER BY id ASC
 	`)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Query failed: %v", err), http.StatusInternalServerError)
@@ -32,7 +38,16 @@ func HandleFetchServices(ctx context.Context, w http.ResponseWriter, pool *pgxpo
 	var services []utils.Service
 	for rows.Next() {
 		var s utils.Service
-		if err := rows.Scan(&s.ID, &s.Service_name, &s.LocalIP, &s.LocalPort, &s.RemoteIP, &s.RemotePort); err != nil {
+		if err := rows.Scan(
+			&s.ID,
+			&s.Service_name,
+			&s.LocalIP,
+			&s.LocalPort,
+			&s.RemoteIP,
+			&s.RemotePort,
+			&s.Online,
+			&s.Lastseen,
+		); err != nil {
 			http.Error(w, fmt.Sprintf("Row scan failed: %v", err), http.StatusInternalServerError)
 			return
 		}
@@ -45,12 +60,13 @@ func HandleFetchServices(ctx context.Context, w http.ResponseWriter, pool *pgxpo
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(services)
 }
+
 //delete service one at a time
 func HandleDeleteService(ctx context.Context, w http.ResponseWriter, pool *pgxpool.Pool, id int) {
 	mu.Lock()
 	defer mu.Unlock()
-		var pid int
-		err := pool.QueryRow(ctx, `SELECT pid FROM services WHERE id = $1`, id).Scan(&pid)
+	var pid int
+	err := pool.QueryRow(ctx, `SELECT pid FROM services WHERE id = $1`, id).Scan(&pid)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to fetch PID for service %d: %v", id, err), http.StatusInternalServerError)
 		return
@@ -66,18 +82,19 @@ func HandleDeleteService(ctx context.Context, w http.ResponseWriter, pool *pgxpo
 		return
 	}
 	proc, err := os.FindProcess(pid)
-		if err != nil {
-			fmt.Fprintf(w, "Service deleted, but failed to find process (PID %d): %v\n", pid, err)
-			return
-		}
-			err = proc.Kill()
-			if err != nil {
-				fmt.Fprintf(w, "Service deleted, but failed to kill process (PID %d): %v\n", pid, err)
-				return
-			}
+	if err != nil {
+		fmt.Fprintf(w, "Service deleted, but failed to find process (PID %d): %v\n", pid, err)
+		return
+	}
+	err = proc.Kill()
+	if err != nil {
+		fmt.Fprintf(w, "Service deleted, but failed to kill process (PID %d): %v\n", pid, err)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(fmt.Sprintf("Service with ID %d deleted successfully", id)))
 }
+
 //add portforward
 func HandleAddService(ctx context.Context, w http.ResponseWriter, pool *pgxpool.Pool, r *http.Request) {
 	mu.Lock()
@@ -88,12 +105,12 @@ func HandleAddService(ctx context.Context, w http.ResponseWriter, pool *pgxpool.
 		return
 	}
 
-	pid, err := portforward.PortForward(ctx,s.LocalIP, strconv.Itoa(s.LocalPort), s.RemoteIP, strconv.Itoa(s.RemotePort))
-if err != nil {
-	http.Error(w, fmt.Sprintf("Failed to start port forward: %v", err), http.StatusInternalServerError)
-	return
-}
-s.PID = pid
+	pid, err := servicetools.PortForward(ctx, s.LocalIP, strconv.Itoa(s.LocalPort), s.RemoteIP, strconv.Itoa(s.RemotePort))
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to start port forward: %v", err), http.StatusInternalServerError)
+		return
+	}
+	s.PID = pid
 	query := `
 		INSERT INTO services (service_name, local_ip, local_port, remote_ip, remote_port,pid)
 		VALUES ($1, $2, $3, $4, $5,$6)
@@ -107,6 +124,7 @@ s.PID = pid
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(s)
 }
+
 //cors
 func EnableCORS(w *http.ResponseWriter, r *http.Request) bool {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
@@ -114,7 +132,7 @@ func EnableCORS(w *http.ResponseWriter, r *http.Request) bool {
 	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
 	if r.Method == http.MethodOptions {
 		(*w).WriteHeader(http.StatusOK)
-		   // (*w).WriteHeader(http.StatusNoContent)
+		// (*w).WriteHeader(http.StatusNoContent)
 		return true
 	}
 	return false

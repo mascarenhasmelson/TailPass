@@ -1,10 +1,21 @@
+
+-- CREATE TABLE groups (
+--     id SERIAL PRIMARY KEY,
+--     name TEXT NOT NULL UNIQUE,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
+DROP TABLE IF EXISTS services;
 CREATE TABLE services (
   id SERIAL PRIMARY KEY,
+  -- group_id INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   service_name VARCHAR(100) NOT NULL,
   local_ip INET NOT NULL,
   local_port INTEGER NOT NULL CHECK (local_port BETWEEN 1 AND 65535),
   remote_ip INET NOT NULL,
   remote_port INTEGER NOT NULL CHECK (remote_port BETWEEN 1 AND 65535),
+  online BOOLEAN DEFAULT FALSE,  
+  last_seen TIMESTAMP, 
   pid INTEGER,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  -- UNIQUE(service_name, group_id)
 );
