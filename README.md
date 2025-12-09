@@ -90,8 +90,8 @@ Fix and Features
   - Refine layout and responsiveness  
 
 - [ ] **Health Checks**
-  - Implement port-based health monitoring for each service  
-  - Periodic background checks with automatic status updates  
+  - ~~Implement port-based health monitoring for each service~~  
+  - ~~Periodic background checks with automatic status updates~~  
 
 - [ ] **Network/Monitoring Tools**
   - Portscan
