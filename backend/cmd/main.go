@@ -25,8 +25,8 @@ func main() {
 		fmt.Println("Kill...")
 		cancel()
 	}()
-	connString := "postgres://admin:StrongPassword123@localhost:5432/tunnel_services"
-	//  connString = os.Getenv("DATABASE_URL")
+	//connString := "postgres://admin:StrongPassword123@localhost:5432/tunnel_services"
+        connString := os.Getenv("DATABASE_URL")
 
 	config, err := pgxpool.ParseConfig(connString)
 	if err != nil {

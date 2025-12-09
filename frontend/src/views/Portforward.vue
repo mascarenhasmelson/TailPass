@@ -38,7 +38,7 @@
                   {{ formatLastSeen(service.last_seen) }}
               </span>
                <span v-else class="last-seen">
-                Now
+                {{ formatLastSeen(service.last_seen) }}
               </span>
               </div>
             </div>
@@ -81,8 +81,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 
-// const API_URL = import.meta.env.VITE_API_URL;
-const API_URL = "http://192.168.20.17:8082";
+const API_URL = import.meta.env.VITE_API_URL;
 const showForm = ref(false);
 const isDark = ref(false);
 const loading = ref(false);
@@ -126,12 +125,12 @@ async function fetchServices() {
 function formatLastSeen(lastSeen) {
   const t = new Date(lastSeen);
   const now = new Date();
-  const diff = (now - t) / 1000; // diff in seconds
+  const diff = (now - t) / 1000; 
 
   if (diff < 60) return "just now";
   if (diff < 3600) return `${Math.floor(diff/60)} minutes ago`;
   if (diff < 86400) return `${Math.floor(diff/3600)} hours ${Math.floor(diff%3600/60)} minutes ago`;
-  return t.toLocaleString(); // fallback for older timestamps
+  return t.toLocaleString(); 
 }
 
 async function fetchGroups() {

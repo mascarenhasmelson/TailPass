@@ -26,7 +26,8 @@ func HandleFetchServices(ctx context.Context, w http.ResponseWriter, pool *pgxpo
 	       remote_port,
 		   online,
 		last_seen
-	FROM services
+	FROM services 
+	ORDER BY id ASC
 	`)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Query failed: %v", err), http.StatusInternalServerError)
