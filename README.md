@@ -22,7 +22,7 @@ Add your local and remote services, start the tunnel, and your traffic flows sea
 ### Create
 
 ![Create](images/Create.png)
-![View](Image/View.png)
+![View](images/View.png)
 
 # Running TailPass with Docker Compose
 TailPass consists of:
