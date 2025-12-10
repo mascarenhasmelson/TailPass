@@ -84,10 +84,13 @@ Fix and Features
 
 - [ ] **Network/Monitoring Tools**
   - Portscan
+  - TCP Port check/Monitoring
   - DNS check/Monitoring
   - Trace route
   - LAN Wakeup
-  - Ping
+  - Ping 
+  - HTTP(S)
+  - SNMP Monitor
   - NSlookup
   - Speedtest
   - Telnet
