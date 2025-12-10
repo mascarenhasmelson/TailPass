@@ -7,8 +7,9 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"port/api"
-	"port/servicetools"
+
+	"github.com/mascarenhasmelson/TailPass/api"
+	"github.com/mascarenhasmelson/TailPass/servicetools"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 )
@@ -26,7 +27,7 @@ func main() {
 		cancel()
 	}()
 	//connString := "postgres://admin:StrongPassword123@localhost:5432/tunnel_services"
-        connString := os.Getenv("DATABASE_URL")
+	connString := os.Getenv("DATABASE_URL")
 
 	config, err := pgxpool.ParseConfig(connString)
 	if err != nil {

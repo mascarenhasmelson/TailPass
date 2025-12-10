@@ -4,7 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"port/utils"
+
+	"github.com/mascarenhasmelson/TailPass/utils"
 )
 
 func GetIspInfo(ctx context.Context) (utils.IPInfoRaw, utils.Error) {

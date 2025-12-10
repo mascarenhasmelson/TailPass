@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"port/servicetools"
-	"port/utils"
 	"strconv"
 	"sync"
+
+	"github.com/mascarenhasmelson/TailPass/servicetools"
+	"github.com/mascarenhasmelson/TailPass/utils"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 )
