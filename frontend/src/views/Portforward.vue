@@ -287,8 +287,9 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 
-const API_URL = "http://192.168.20.17:8082";
+//const API_URL = "http://192.168.20.17:8082";
 
+const API_URL = import.meta.env.VITE_API_URL;
 const showForm = ref(false);
 const showDeleteConfirm = ref(null);
 const loading = ref(true); // Start with loading true
