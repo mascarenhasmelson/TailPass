@@ -1,7 +1,7 @@
 <template>
 <div class="app">
-		<!-- Sidebar -->
-		<Sidebar />
+		<!-- Sidebar (hidden on auth screens) -->
+		<Sidebar v-if="showChrome" />
 
 		<!-- Content -->
 		<router-view />
@@ -9,7 +9,12 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import Sidebar from './components/Sidebar.vue'
+
+const route = useRoute()
+const showChrome = computed(() => !['/login', '/setup'].includes(route.path))
 </script>
 
 <style lang="scss">

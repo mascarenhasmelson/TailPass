@@ -19,3 +19,21 @@ CREATE TABLE services (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   -- UNIQUE(service_name, group_id)
 );
+
+-- Single-admin authentication. The backend also creates these tables itself
+-- on startup (idempotently) so upgrading an existing TailPass deployment
+-- doesn't require wiping this init-only schema's Postgres volume.
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(64) NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  token_hash TEXT NOT NULL UNIQUE,
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

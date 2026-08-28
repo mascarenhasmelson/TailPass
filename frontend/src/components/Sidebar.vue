@@ -29,19 +29,32 @@
 				<span class="material-icons">settings</span>
 				<span class="text">Settings</span>
 			</router-link>
+			<button class="button logout-button" @click="handleLogout">
+				<span class="material-icons">logout</span>
+				<span class="text">{{ auth.username ? `Log out (${auth.username})` : 'Log out' }}</span>
+			</button>
 		</div>
 	</aside>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import logoURL from '../assets/logo.png'
+import { useAuthStore } from '../stores/auth'
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "true")
+const auth = useAuthStore()
+const router = useRouter()
 
 const ToggleMenu = () => {
 	is_expanded.value = !is_expanded.value
 	localStorage.setItem("is_expanded", is_expanded.value)
+}
+
+async function handleLogout() {
+	await auth.logout()
+	router.push('/login')
 }
 </script>
 
@@ -117,6 +130,8 @@ aside {
 			display: flex;
 			align-items: center;
 			text-decoration: none;
+			width: 100%;
+			text-align: left;
 
 			transition: 0.2s ease-in-out;
 			padding: 0.5rem 1rem;

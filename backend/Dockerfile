@@ -4,14 +4,13 @@ RUN apk add --no-cache git
 COPY . .
 RUN go mod download
 RUN go build -mod=mod -o TailPass ./cmd/main.go
-RUN git clone https://github.com/mascarenhasmelson/tcp-tunnel-go.git /tcp-tunnel-go \
-    && cd /tcp-tunnel-go \
-    && go mod tidy \
-    && go build -o /tcp
+
 FROM alpine:latest
 WORKDIR /app
+# The 'tailscale' CLI is optional: if present on PATH, TailPass uses it to
+# resolve this host's Tailscale IP; otherwise it falls back to scanning
+# network interfaces for a 100.64.0.0/10 address itself.
 COPY --from=builder /app/TailPass .
-COPY --from=builder /tcp ./tcp
-RUN chmod +x TailPass tcp
+RUN chmod +x TailPass
 EXPOSE 8082
 CMD ["./TailPass"]

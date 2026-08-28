@@ -26,9 +26,13 @@
 
 <script>
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useAuthStore } from '../stores/auth';
 
-const API_URL = import.meta.env.VITE_API_URL;
 export default {
+  setup() {
+    const auth = useAuthStore();
+    return { auth };
+  },
   data() {
     return {
       Public_IP: "Loading...",
@@ -41,7 +45,7 @@ export default {
   methods: {
     async fetchISPInfo() {
       try {
-        const response = await fetch(`${API_URL}/services/isp`);
+        const response = await this.auth.authFetch('/services/isp');
         
         if (!response.ok) {
           throw new Error("Failed to fetch ISP info");

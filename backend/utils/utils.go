@@ -11,7 +11,11 @@ type Service struct {
 	RemotePort   int        `json:"remote_port"`
 	Online       bool       `json:"online"`
 	Lastseen     *time.Time `json:"last_seen"`
-	PID          int        `json:"pid"`
+	PID          int        `json:"pid,omitempty"`
+	// Running reflects the live in-process tunnel state (not persisted to
+	// the DB) so the UI can tell apart "reachable" (Online, via health
+	// check) from "tunnel actively forwarding" (Running).
+	Running bool `json:"running,omitempty"`
 }
 
 // type Home struct {

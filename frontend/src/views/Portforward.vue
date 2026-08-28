@@ -61,7 +61,7 @@
             </button>
           </div>
         </div>
-        <button class="add-btn" @click="showForm = true">
+        <button class="add-btn" @click="openAddForm">
           <span class="btn-icon">+</span>
           Add New Service
         </button>
@@ -203,25 +203,50 @@
               
               <div class="form-row">
                 <div class="form-group">
-                  <label for="local_ip">Local IP *</label>
-                  <input 
-                    id="local_ip"
-                    v-model="form.local_ip" 
-                    placeholder="192.168.1.100" 
-                    required
-                  />
+                  <label for="local_ip">
+                    Local IP (Tailscale)
+                    <span class="auto-tag" v-if="tsIpLoading">detecting…</span>
+                    <span class="auto-tag" v-else-if="tsIpError">unavailable</span>
+                    <span class="auto-tag ok" v-else>auto-detected</span>
+                  </label>
+                  <div class="input-with-action">
+                    <input
+                      id="local_ip"
+                      v-model="form.local_ip"
+                      placeholder="Auto-detected Tailscale IP"
+                    />
+                    <button
+                      type="button"
+                      class="mini-btn"
+                      title="Re-detect this host's Tailscale IP"
+                      @click="detectTailscaleIP"
+                      :disabled="tsIpLoading"
+                    >
+                      🛰️
+                    </button>
+                  </div>
                 </div>
                 <div class="form-group">
-                  <label for="local_port">Local Port *</label>
-                  <input 
-                    id="local_port"
-                    v-model="form.local_port" 
-                    placeholder="80" 
-                    type="number"
-                    min="1"
-                    max="65535"
-                    required
-                  />
+                  <label for="local_port">Local Port</label>
+                  <div class="input-with-action">
+                    <input
+                      id="local_port"
+                      v-model="form.local_port"
+                      placeholder="Leave blank for a random free port"
+                      type="number"
+                      min="1"
+                      max="65535"
+                    />
+                    <button
+                      type="button"
+                      class="mini-btn"
+                      title="Generate a random free local port"
+                      @click="randomizeLocalPort"
+                      :disabled="portLoading"
+                    >
+                      🎲
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -251,7 +276,10 @@
 
               <div class="form-note">
                 <span class="note-icon">💡</span>
-                <span>All fields marked with * are required. Service status will be checked automatically.</span>
+                <span>
+                  Local IP is auto-detected from this host's Tailscale interface, and the local
+                  port is auto-generated if left blank. Only remote fields are required.
+                </span>
               </div>
 
               <div class="form-actions">
@@ -286,10 +314,12 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 
-//const API_URL = "http://192.168.20.17:8082";
+const auth = useAuthStore();
+const router = useRouter();
 
-const API_URL = import.meta.env.VITE_API_URL;
 const showForm = ref(false);
 const showDeleteConfirm = ref(null);
 const loading = ref(true); // Start with loading true
@@ -299,6 +329,11 @@ const searchQuery = ref('');
 const activeFilter = ref('all');
 const services = ref([]);
 const initialLoad = ref(true); // Track if this is the first load
+
+// Local IP/port are auto-detected/auto-generated rather than typed in manually.
+const tsIpLoading = ref(false);
+const tsIpError = ref(null);
+const portLoading = ref(false);
 
 const form = ref({
   service_name: '',
@@ -348,7 +383,11 @@ async function fetchServices() {
   error.value = null;
 
   try {
-    const response = await fetch(`${API_URL}/services`);
+    const response = await auth.authFetch('/services');
+    if (response.status === 401) {
+      router.push('/login');
+      return;
+    }
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -372,7 +411,7 @@ async function refreshService(id) {
   service.online = false;
   
   try {
-    const response = await fetch(`${API_URL}/services/${id}/check`);
+    const response = await auth.authFetch(`/services/${id}/check`);
     if (response.ok) {
       const data = await response.json();
       service.online = data.online;
@@ -380,6 +419,49 @@ async function refreshService(id) {
     }
   } catch (err) {
     console.error('Error refreshing service:', err);
+  }
+}
+
+function openAddForm() {
+  showForm.value = true;
+  detectTailscaleIP();
+}
+
+async function detectTailscaleIP() {
+  tsIpLoading.value = true;
+  tsIpError.value = null;
+  try {
+    const response = await auth.authFetch('/services/tailscale-ip');
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.Message || 'Failed to detect Tailscale IP');
+    }
+    form.value.local_ip = data.ip;
+  } catch (err) {
+    tsIpError.value = err.message;
+    console.error('Error detecting Tailscale IP:', err);
+  } finally {
+    tsIpLoading.value = false;
+  }
+}
+
+async function randomizeLocalPort() {
+  portLoading.value = true;
+  try {
+    const query = form.value.local_ip
+      ? `?local_ip=${encodeURIComponent(form.value.local_ip)}`
+      : '';
+    const response = await auth.authFetch(`/services/random-port${query}`);
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.Message || 'Failed to generate a random port');
+    }
+    form.value.local_port = data.port;
+  } catch (err) {
+    console.error('Error generating random port:', err);
+    alert(`Could not generate a random port: ${err.message}`);
+  } finally {
+    portLoading.value = false;
   }
 }
 
@@ -391,10 +473,14 @@ async function deleteService(id) {
   if (!showDeleteConfirm.value) return;
 
   try {
-    const response = await fetch(`${API_URL}/services/${id}`, {
+    const response = await auth.authFetch(`/services/${id}`, {
       method: 'DELETE'
     });
-    
+
+    if (response.status === 401) {
+      router.push('/login');
+      return;
+    }
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -433,21 +519,38 @@ async function saveService() {
     return;
   }
 
+  if (!form.value.remote_ip || !form.value.remote_port) {
+    alert('Remote IP and remote port are required');
+    return;
+  }
+
   saving.value = true;
 
   try {
-    const response = await fetch(`${API_URL}/services`, {
+    // Local IP/port are optional: omit them entirely when blank so the
+    // backend auto-detects the Tailscale IP / generates a random free port.
+    const payload = {
+      service_name: form.value.service_name,
+      remote_ip: form.value.remote_ip,
+      remote_port: Number(form.value.remote_port),
+    };
+    if (form.value.local_ip) {
+      payload.local_ip = form.value.local_ip;
+    }
+    if (form.value.local_port) {
+      payload.local_port = Number(form.value.local_port);
+    }
+
+    const response = await auth.authFetch('/services', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        service_name: form.value.service_name,
-        local_ip: form.value.local_ip,
-        local_port: form.value.local_port,
-        remote_ip: form.value.remote_ip,
-        remote_port: form.value.remote_port
-      }),
+      body: JSON.stringify(payload),
     });
 
+    if (response.status === 401) {
+      router.push('/login');
+      return;
+    }
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -1183,6 +1286,47 @@ onUnmounted(() => {
 .form-row {
   display: flex;
   gap: 20px;
+}
+
+.auto-tag {
+  margin-left: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: none;
+  color: #94a3b8;
+}
+
+.auto-tag.ok {
+  color: #34d399;
+}
+
+.input-with-action {
+  display: flex;
+  gap: 8px;
+}
+
+.input-with-action input {
+  flex: 1;
+}
+
+.mini-btn {
+  flex-shrink: 0;
+  width: 46px;
+  border: 2px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.7);
+  font-size: 1.1rem;
+  transition: all 0.3s;
+}
+
+.mini-btn:hover:not(:disabled) {
+  border-color: #60a5fa;
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.mini-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .form-row .form-group {
